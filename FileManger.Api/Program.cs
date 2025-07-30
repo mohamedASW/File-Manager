@@ -1,4 +1,9 @@
+using FileManager.Core;
+using FileManager.Core.Interfaces;
+using FileManager.EF;
 using FileManager.EF.Presistance;
+using FileManager.EF.Repositories;
+using FileManger.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +15,9 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbcontext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<IFileService , FileService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
