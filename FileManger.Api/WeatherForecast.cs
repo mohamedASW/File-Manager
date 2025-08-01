@@ -1,4 +1,4 @@
-namespace FileManger.Api
+namespace FileManager.Api
 {
     public class WeatherForecast
     {

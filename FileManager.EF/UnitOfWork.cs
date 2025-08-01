@@ -1,22 +1,17 @@
 ﻿using FileManager.Core;
+using FileManager.Core.Entites;
 using FileManager.Core.Interfaces;
 using FileManager.EF.Presistance;
-using FileManager.EF.Repositories;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileManager.EF;
 public class UnitOfWork(ApplicationDbcontext context, IServiceProvider serviceProvider) : IUnitOfWork
 {
     private readonly ApplicationDbcontext _context = context;
     private readonly IServiceProvider _serviceProvider = serviceProvider;
-    private IFileRepository? _fileRepository;
+    private IGenericRepository<UploadedFile>? _fileRepository;
     private static object _lock = new object();
-    public IFileRepository FileRepository
+    public IGenericRepository<UploadedFile> FileRepository
     {
         get
         {
@@ -26,7 +21,7 @@ public class UnitOfWork(ApplicationDbcontext context, IServiceProvider servicePr
                 lock (_lock)
                 {
                     if (_fileRepository is null)
-                        _fileRepository = _serviceProvider.GetRequiredService<IFileRepository>();
+                        _fileRepository = _serviceProvider.GetRequiredService<IGenericRepository<UploadedFile>>();
                 }
             }
             return _fileRepository;

@@ -3,8 +3,12 @@ using FileManager.Core.Interfaces;
 using FileManager.EF;
 using FileManager.EF.Presistance;
 using FileManager.EF.Repositories;
-using FileManger.Api.Services;
+using FileManager.Api.Services;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using FileManager.Core.Settings;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +19,11 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbcontext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddFluentValidationAutoValidation().AddValidatorsFromAssembly(typeof(FileSettings).Assembly);
+builder.Services.Configure<FileSettings>(builder.Configuration.GetSection(nameof(FileSettings)));
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IFileService , FileService>();
 var app = builder.Build();
 
@@ -32,5 +39,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseStaticFiles();
 
 app.Run();
